@@ -67,31 +67,33 @@ export const useProgressStore = create<ProgressState>()(
         if (!currentProgress) return;
 
         try {
+          const newTotalXP = currentProgress.totalXP + xp;
+          const newLevel = Math.floor(newTotalXP / 100) + 1;
+          const today = new Date().toDateString();
+          const lastActivity = new Date(currentProgress.lastActivity).toDateString();
+          const newStreak = today !== lastActivity ? currentProgress.streak + 1 : currentProgress.streak;
+          
           const updatedProgress = await localAdapter.updateProgress({
             ...currentProgress,
-            totalXP: currentProgress.totalXP + xp,
+            totalXP: newTotalXP,
+            level: newLevel,
+            streak: newStreak,
             lastActivity: new Date().toISOString(),
-            level: Math.floor((currentProgress.totalXP + xp) / 100) + 1,
           });
 
           set({ progress: updatedProgress });
 
-          // Check for level up
-          const newLevel = Math.floor(updatedProgress.totalXP / 100) + 1;
+          // Check for level up badge
           if (newLevel > currentProgress.level) {
             await get().awardBadge('level_up');
           }
-
-          // Update streak
-          const today = new Date().toDateString();
-          const lastActivity = new Date(currentProgress.lastActivity).toDateString();
-          if (today !== lastActivity) {
-            const streak = currentProgress.streak + 1;
-            const finalProgress = await localAdapter.updateProgress({
-              ...updatedProgress,
-              streak,
-            });
-            set({ progress: finalProgress });
+          
+          // Check for streak badges
+          if (newStreak === 7) {
+            await get().awardBadge('streak_7');
+          }
+          if (newStreak === 30) {
+            await get().awardBadge('streak_30');
           }
         } catch (error) {
           console.error('Failed to update progress:', error);
@@ -100,7 +102,7 @@ export const useProgressStore = create<ProgressState>()(
 
       awardBadge: async (badgeId: string) => {
         const { badges } = get();
-        if (badges.find(b => b.id === badgeId)) return; // Already has badge
+        if (badges.find(b => b.id === badgeId)) return;
 
         try {
           const badge = await localAdapter.awardBadge(badgeId);
@@ -112,7 +114,7 @@ export const useProgressStore = create<ProgressState>()(
 
       unlockAchievement: async (achievementId: string) => {
         const { achievements } = get();
-        if (achievements.find(a => a.id === achievementId)) return; // Already unlocked
+        if (achievements.find(a => a.id === achievementId)) return;
 
         try {
           const achievement = await localAdapter.unlockAchievement(achievementId);
@@ -141,16 +143,8 @@ export const useProgressStore = create<ProgressState>()(
 
       markLessonComplete: async (lessonId: string) => {
         const { progress: currentProgress } = get();
-        console.log('markLessonComplete called with:', lessonId);
-        console.log('Current progress in store:', currentProgress);
         
-        if (!currentProgress) {
-          console.error('No progress found in store');
-          return;
-        }
-        
-        if (currentProgress.completedLessons?.includes(lessonId)) {
-          console.log('Lesson already completed');
+        if (!currentProgress || currentProgress.completedLessons?.includes(lessonId)) {
           return;
         }
 
@@ -160,14 +154,23 @@ export const useProgressStore = create<ProgressState>()(
             completedLessons: [...(currentProgress.completedLessons || []), lessonId],
           };
           
-          console.log('Updating progress with:', updatedProgress);
           const savedProgress = await localAdapter.updateProgress(updatedProgress);
-          
           set({ progress: savedProgress });
-          console.log('Progress updated successfully');
           
           // Award XP for completion
           await get().updateProgress(50, `Completed lesson ${lessonId}`);
+          
+          // Check for achievements
+          const completedCount = updatedProgress.completedLessons.length;
+          if (completedCount === 1) {
+            await get().awardBadge('first_lesson');
+          }
+          if (completedCount === 10) {
+            await get().unlockAchievement('perfectionist');
+          }
+          if (completedCount === 100) {
+            await get().unlockAchievement('scholar');
+          }
         } catch (error) {
           console.error('Failed to mark lesson as complete:', error);
           throw error;

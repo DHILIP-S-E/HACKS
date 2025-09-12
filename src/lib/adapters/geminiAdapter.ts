@@ -9,7 +9,7 @@ class GeminiClient {
   }
 
   async generateContent(prompt: string, options?: any): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/models/gemini-pro:generateContent?key=${this.apiKey}`, {
+    const response = await fetch(`${this.baseUrl}/models/gemini-2.0-flash-exp:generateContent?key=${this.apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
