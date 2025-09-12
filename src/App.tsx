@@ -23,6 +23,8 @@ const CreateLessonPage = lazy(() => import('@/pages/teacher/CreateLessonPage'));
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const AchievementsPage = lazy(() => import('@/pages/AchievementsPage'));
+const ProgressPage = lazy(() => import('@/pages/ProgressPage'));
 
 function App() {
   const { initialize: initAuth, isLoading: authLoading } = useAuthStore();
@@ -113,6 +115,8 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/achievements" element={<AchievementsPage />} />
+              <Route path="/progress" element={<ProgressPage />} />
               
               {/* Student routes */}
               <Route path="/lessons" element={<LessonsPage />} />

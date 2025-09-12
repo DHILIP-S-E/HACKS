@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { localAdapter } from '@/lib/adapters/localAdapter';
 import type { Lesson } from '@/types/lesson';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Clock, Tag, User } from 'lucide-react';
+import { useProgressStore } from '@/stores/progressStore';
+import { Clock, Tag, User, CheckCircle } from 'lucide-react';
 
 const LessonsPage: React.FC = () => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { progress } = useProgressStore();
 
   useEffect(() => {
     const fetchLessons = async () => {
@@ -65,7 +67,12 @@ const LessonsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {lessons.map((lesson) => (
-            <div key={lesson.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div key={lesson.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow relative">
+              {progress?.completedLessons?.includes(lesson.id) && (
+                <div className="absolute top-4 right-4">
+                  <CheckCircle className="w-6 h-6 text-green-500 fill-current" />
+                </div>
+              )}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(lesson.difficulty)}`}>
@@ -105,7 +112,7 @@ const LessonsPage: React.FC = () => {
                   to={`/lessons/${lesson.id}`}
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  Start Lesson
+                  {progress?.completedLessons?.includes(lesson.id) ? 'Review Lesson' : 'Start Lesson'}
                 </Link>
                 <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                   <User className="w-3 h-3 mr-1" />
