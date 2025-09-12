@@ -16,6 +16,7 @@ interface ProgressState {
   unlockAchievement: (achievementId: string) => Promise<void>;
   getProgressForLesson: (lessonId: string) => Promise<any>;
   updateLessonProgress: (lessonId: string, progress: any) => Promise<void>;
+  markLessonComplete: (lessonId: string) => Promise<void>;
 }
 
 export const useProgressStore = create<ProgressState>()(
@@ -29,11 +30,31 @@ export const useProgressStore = create<ProgressState>()(
       initialize: async () => {
         set({ isLoading: true });
         try {
-          const progress = await localAdapter.getUserProgress();
+          let progress = await localAdapter.getUserProgress();
+          
+          // If no progress exists, create initial progress
+          if (!progress) {
+            const currentUser = await localAdapter.getCurrentUser();
+            if (currentUser) {
+              progress = {
+                id: `progress_${currentUser.id}`,
+                userId: currentUser.id,
+                level: 1,
+                totalXP: 0,
+                streak: 0,
+                lastActivity: new Date().toISOString(),
+                completedLessons: [],
+                achievements: [],
+              };
+              await localAdapter.updateProgress(progress);
+            }
+          }
+          
           const badges = await localAdapter.getUserBadges();
           const achievements = await localAdapter.getUserAchievements();
           
           set({ progress, badges, achievements });
+          console.log('Progress store initialized:', { progress, badges: badges.length, achievements: achievements.length });
         } catch (error) {
           console.error('Failed to initialize progress:', error);
         } finally {
@@ -50,6 +71,7 @@ export const useProgressStore = create<ProgressState>()(
             ...currentProgress,
             totalXP: currentProgress.totalXP + xp,
             lastActivity: new Date().toISOString(),
+            level: Math.floor((currentProgress.totalXP + xp) / 100) + 1,
           });
 
           set({ progress: updatedProgress });
@@ -58,7 +80,6 @@ export const useProgressStore = create<ProgressState>()(
           const newLevel = Math.floor(updatedProgress.totalXP / 100) + 1;
           if (newLevel > currentProgress.level) {
             await get().awardBadge('level_up');
-            // Could trigger celebration UI here
           }
 
           // Update streak
@@ -66,10 +87,11 @@ export const useProgressStore = create<ProgressState>()(
           const lastActivity = new Date(currentProgress.lastActivity).toDateString();
           if (today !== lastActivity) {
             const streak = currentProgress.streak + 1;
-            await localAdapter.updateProgress({
+            const finalProgress = await localAdapter.updateProgress({
               ...updatedProgress,
               streak,
             });
+            set({ progress: finalProgress });
           }
         } catch (error) {
           console.error('Failed to update progress:', error);
@@ -114,6 +136,41 @@ export const useProgressStore = create<ProgressState>()(
           await localAdapter.updateLessonProgress(lessonId, progress);
         } catch (error) {
           console.error('Failed to update lesson progress:', error);
+        }
+      },
+
+      markLessonComplete: async (lessonId: string) => {
+        const { progress: currentProgress } = get();
+        console.log('markLessonComplete called with:', lessonId);
+        console.log('Current progress in store:', currentProgress);
+        
+        if (!currentProgress) {
+          console.error('No progress found in store');
+          return;
+        }
+        
+        if (currentProgress.completedLessons?.includes(lessonId)) {
+          console.log('Lesson already completed');
+          return;
+        }
+
+        try {
+          const updatedProgress = {
+            ...currentProgress,
+            completedLessons: [...(currentProgress.completedLessons || []), lessonId],
+          };
+          
+          console.log('Updating progress with:', updatedProgress);
+          const savedProgress = await localAdapter.updateProgress(updatedProgress);
+          
+          set({ progress: savedProgress });
+          console.log('Progress updated successfully');
+          
+          // Award XP for completion
+          await get().updateProgress(50, `Completed lesson ${lessonId}`);
+        } catch (error) {
+          console.error('Failed to mark lesson as complete:', error);
+          throw error;
         }
       },
     }),

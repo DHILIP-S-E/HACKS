@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { localAdapter } from '@/lib/adapters/localAdapter';
 import type { Lesson } from '@/types/lesson';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useProgressStore } from '@/stores/progressStore';
 import { ArrowLeft, Clock, Tag, CheckCircle, ArrowRight } from 'lucide-react';
 
 const LessonPage: React.FC = () => {
@@ -11,7 +12,9 @@ const LessonPage: React.FC = () => {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [completed, setCompleted] = useState(false);
+  const { progress, markLessonComplete } = useProgressStore();
+  
+  const isCompleted = progress?.completedLessons?.includes(id || '') || false;
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -39,10 +42,18 @@ const LessonPage: React.FC = () => {
     fetchLesson();
   }, [id]);
 
-  const handleMarkComplete = () => {
-    setCompleted(true);
-    // Here you would typically save progress to the backend
-    console.log('Lesson marked as complete');
+  const handleMarkComplete = async () => {
+    if (!id) return;
+    
+    console.log('Marking lesson as complete:', id);
+    console.log('Current progress:', progress);
+    
+    try {
+      await markLessonComplete(id);
+      console.log('Lesson marked as complete successfully');
+    } catch (error) {
+      console.error('Failed to mark lesson as complete:', error);
+    }
   };
 
   const renderMarkdownContent = (content: string) => {
@@ -108,7 +119,7 @@ const LessonPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {lesson.title}
             </h1>
-            {completed && (
+            {isCompleted && (
               <div className="flex items-center text-green-600">
                 <CheckCircle className="w-5 h-5 mr-2" />
                 Completed
@@ -149,7 +160,7 @@ const LessonPage: React.FC = () => {
         
         {/* Actions */}
         <div className="flex gap-4 justify-center">
-          {!completed && (
+          {!isCompleted && (
             <button 
               onClick={handleMarkComplete}
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center"
