@@ -157,7 +157,10 @@ const LessonPage: React.FC = () => {
         
         <AccessibilityHelper
           content={lesson.content}
-          onSimplify={setSimplifiedContent}
+          onSimplify={(text) => {
+            console.log('Simplifying text:', text);
+            setSimplifiedContent(text);
+          }}
         />
         
         <div className="mt-8 text-center">

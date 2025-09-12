@@ -78,37 +78,66 @@ export class AccessibilityNLP {
   }
   
   private static translateText(text: string, language: SupportedLanguage): string {
-    // Basic translations for common educational terms
     const translations = {
       tamil: {
         'learn': 'கற்று',
-        'study': 'படிப்பு',
+        'study': 'படிப்பு', 
         'read': 'படி',
         'write': 'எழுது',
         'understand': 'புரிந்து',
         'lesson': 'பாடம்',
         'student': 'மாணவர்',
-        'teacher': 'ஆசிரியர்'
+        'teacher': 'ஆசிரியர்',
+        'book': 'புத்தகம்',
+        'knowledge': 'அறிவு',
+        'education': 'கல்வி',
+        'school': 'பள்ளி',
+        'class': 'வகுப்பு',
+        'homework': 'வீட்டுப்பாடம்',
+        'exam': 'தேர்வு',
+        'question': 'கேள்வி',
+        'answer': 'பதில்',
+        'practice': 'பயிற்சி'
       },
       malayalam: {
         'learn': 'പഠിക്കുക',
         'study': 'പഠനം',
-        'read': 'വായിക്കുക',
+        'read': 'വായിക്കുക', 
         'write': 'എഴുതുക',
         'understand': 'മനസ്സിലാക്കുക',
         'lesson': 'പാഠം',
         'student': 'വിദ്യാർത്ഥി',
-        'teacher': 'അധ്യാപകൻ'
+        'teacher': 'അധ്യാപകൻ',
+        'book': 'പുസ്തകം',
+        'knowledge': 'അറിവ്',
+        'education': 'വിദ്യാഭ്യാസം',
+        'school': 'സ്കൂൾ',
+        'class': 'ക്ലാസ്',
+        'homework': 'ഗൃഹപാഠം',
+        'exam': 'പരീക്ഷ',
+        'question': 'ചോദ്യം',
+        'answer': 'ഉത്തരം',
+        'practice': 'അഭ്യാസം'
       },
       kannada: {
         'learn': 'ಕಲಿಯಿರಿ',
         'study': 'ಅಧ್ಯಯನ',
         'read': 'ಓದು',
-        'write': 'ಬರೆಯಿರಿ',
+        'write': 'ಬರೆಯಿರಿ', 
         'understand': 'ಅರ್ಥಮಾಡಿಕೊಳ್ಳಿ',
         'lesson': 'ಪಾಠ',
         'student': 'ವಿದ್ಯಾರ್ಥಿ',
-        'teacher': 'ಶಿಕ್ಷಕ'
+        'teacher': 'ಶಿಕ್ಷಕ',
+        'book': 'ಪುಸ್ತಕ',
+        'knowledge': 'ಜ್ಞಾನ',
+        'education': 'ಶಿಕ್ಷಣ',
+        'school': 'ಶಾಲೆ',
+        'class': 'ತರಗತಿ',
+        'homework': 'ಮನೆಕೆಲಸ',
+        'exam': 'ಪರೀಕ್ಷೆ',
+        'question': 'ಪ್ರಶ್ನೆ',
+        'answer': 'ಉತ್ತರ',
+        'practice': 'ಅಭ್ಯಾಸ'
       }
     };
     
@@ -117,7 +146,7 @@ export class AccessibilityNLP {
     if (langTranslations) {
       Object.entries(langTranslations).forEach(([english, local]) => {
         const regex = new RegExp(`\\b${english}\\b`, 'gi');
-        translated = translated.replace(regex, `${english} (${local})`);
+        translated = translated.replace(regex, local);
       });
     }
     

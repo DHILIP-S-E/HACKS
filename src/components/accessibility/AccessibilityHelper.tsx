@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AccessibilityNLP, SupportedLanguage } from '../../lib/accessibilityNLP';
+import { GeminiTranslator } from '../../lib/geminiTranslator';
 import { Eye, Volume2, Type, Lightbulb, Globe } from 'lucide-react';
 
 interface AccessibilityHelperProps {
@@ -13,9 +14,10 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>('english');
 
   const analyzeContent = () => {
+    console.log('Analyzing content for language:', selectedLanguage);
     const result = AccessibilityNLP.analyzeForAccessibility(content, selectedLanguage);
+    console.log('Analysis result:', result);
     setAnalysis(result);
-    setShowHelper(true);
   };
 
   const getReadabilityColor = (level: string) => {
@@ -31,7 +33,10 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
   if (!showHelper) {
     return (
       <button
-        onClick={analyzeContent}
+        onClick={() => {
+          analyzeContent();
+          setShowHelper(true);
+        }}
         className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600"
         title="Accessibility Helper"
       >
@@ -63,8 +68,10 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
         <select
           value={selectedLanguage}
           onChange={(e) => {
-            setSelectedLanguage(e.target.value as SupportedLanguage);
-            if (analysis) analyzeContent();
+            const newLang = e.target.value as SupportedLanguage;
+            setSelectedLanguage(newLang);
+            const result = AccessibilityNLP.analyzeForAccessibility(content, newLang);
+            setAnalysis(result);
           }}
           className="w-full text-xs p-1 border rounded"
         >
@@ -97,11 +104,28 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
 
           <div className="space-y-2">
             <button
-              onClick={() => onSimplify(analysis.translatedText || analysis.simplifiedText)}
+              onClick={async () => {
+                console.log('Button clicked for language:', selectedLanguage);
+                let processedText;
+                
+                if (selectedLanguage === 'english') {
+                  processedText = await GeminiTranslator.simplifyText(content, 'english');
+                } else {
+                  const langMap = {
+                    tamil: 'Tamil',
+                    malayalam: 'Malayalam', 
+                    kannada: 'Kannada'
+                  };
+                  processedText = await GeminiTranslator.translateText(content, langMap[selectedLanguage]);
+                }
+                
+                console.log('Processed text:', processedText);
+                onSimplify(processedText);
+              }}
               className="w-full bg-green-500 text-white text-sm py-2 rounded hover:bg-green-600 flex items-center justify-center gap-2"
             >
               <Type className="w-3 h-3" />
-              {selectedLanguage === 'english' ? 'Simplify Text' : 'Translate & Simplify'}
+              {selectedLanguage === 'english' ? 'Simplify with AI' : 'Translate with AI'}
             </button>
 
             <button

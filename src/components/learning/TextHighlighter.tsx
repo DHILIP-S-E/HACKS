@@ -82,8 +82,16 @@ export const TextHighlighter: React.FC<TextHighlighterProps> = ({
   };
 
   const renderContentWithHighlights = () => {
-    if (!highlights.length) return content;
+    if (!highlights.length) {
+      return content
+        .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3 class="text-lg font-medium mb-2">$1</h3>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+    }
     
+    // Apply highlights first, then format
     const sortedHighlights = [...highlights].sort((a, b) => a.startOffset - b.startOffset);
     let result = '';
     let lastOffset = 0;
@@ -95,7 +103,14 @@ export const TextHighlighter: React.FC<TextHighlighterProps> = ({
     });
     
     result += content.slice(lastOffset);
-    return result;
+    
+    // Format the final result
+    return result
+      .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mb-4">$1</h1>')
+      .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold mb-3">$1</h2>')
+      .replace(/^### (.+)$/gm, '<h3 class="text-lg font-medium mb-2">$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
   };
 
   return (

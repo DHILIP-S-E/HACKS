@@ -106,7 +106,11 @@ export const useAccessibilityStore = create<AccessibilityState>()(
       },
 
       toggleDyslexicFont: () => {
-        set((state) => ({ dyslexicFont: !state.dyslexicFont }));
+        try {
+          set((state) => ({ dyslexicFont: !state.dyslexicFont }));
+        } catch (error) {
+          console.error('Error toggling dyslexic font:', error);
+        }
       },
 
       setFontSize: (fontSize) => {

@@ -59,28 +59,32 @@ function App() {
 
   // Apply accessibility settings to document
   useEffect(() => {
-    const root = document.documentElement;
-    
-    // Theme
-    root.classList.toggle('dark', theme === 'dark');
-    
-    // High contrast
-    root.classList.toggle('high-contrast', highContrast);
-    
-    // Dyslexic font
-    root.classList.toggle('dyslexic-font', dyslexicFont);
-    
-    // Font size
-    root.style.fontSize = `${fontSize}px`;
-    
-    // Text spacing
-    root.setAttribute('data-text-spacing', textSpacing);
-    
-    // Reduced motion
-    if (reducedMotion) {
-      root.style.setProperty('--animation-duration', '0.01ms');
-    } else {
-      root.style.removeProperty('--animation-duration');
+    try {
+      const root = document.documentElement;
+      
+      // Theme
+      root.classList.toggle('dark', theme === 'dark');
+      
+      // High contrast
+      root.classList.toggle('high-contrast', highContrast);
+      
+      // Dyslexic font
+      root.classList.toggle('dyslexic-font', dyslexicFont);
+      
+      // Font size
+      root.style.fontSize = `${fontSize}px`;
+      
+      // Text spacing
+      root.setAttribute('data-text-spacing', textSpacing);
+      
+      // Reduced motion
+      if (reducedMotion) {
+        root.style.setProperty('--animation-duration', '0.01ms');
+      } else {
+        root.style.removeProperty('--animation-duration');
+      }
+    } catch (error) {
+      console.error('Error applying accessibility settings:', error);
     }
   }, [theme, highContrast, dyslexicFont, fontSize, textSpacing, reducedMotion]);
 
