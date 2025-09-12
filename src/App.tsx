@@ -68,8 +68,12 @@ function App() {
       // High contrast
       root.classList.toggle('high-contrast', highContrast);
       
-      // Dyslexic font
-      root.classList.toggle('dyslexic-font', dyslexicFont);
+      // Dyslexic font - apply safely
+      if (dyslexicFont) {
+        root.classList.add('dyslexic-font');
+      } else {
+        root.classList.remove('dyslexic-font');
+      }
       
       // Font size
       root.style.fontSize = `${fontSize}px`;

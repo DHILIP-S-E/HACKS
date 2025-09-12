@@ -174,12 +174,30 @@ export const TextHighlighter: React.FC<TextHighlighterProps> = ({
       
       {notes.length > 0 && (
         <div className="mt-4 border-t pt-4">
-          <h3 className="font-semibold mb-2">Notes</h3>
-          {notes.map(note => (
-            <div key={note.id} className="bg-yellow-50 p-2 rounded mb-2 text-sm">
-              {note.content}
-            </div>
-          ))}
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+            My Notes ({notes.length})
+          </h3>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {notes.map(note => (
+              <div key={note.id} className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-3 rounded-r shadow-sm">
+                <p className="text-sm text-gray-800 leading-relaxed">{note.content}</p>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xs text-gray-500">
+                    {new Date(note.createdAt).toLocaleDateString()}
+                  </span>
+                  <button 
+                    onClick={() => {
+                      // Add delete functionality if needed
+                    }}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

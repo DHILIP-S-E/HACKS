@@ -107,9 +107,21 @@ export const useAccessibilityStore = create<AccessibilityState>()(
 
       toggleDyslexicFont: () => {
         try {
-          set((state) => ({ dyslexicFont: !state.dyslexicFont }));
+          const newState = !get().dyslexicFont;
+          set({ dyslexicFont: newState });
+          
+          // Apply font safely
+          requestAnimationFrame(() => {
+            try {
+              document.documentElement.classList.toggle('dyslexic-font', newState);
+            } catch (error) {
+              console.error('Font application failed:', error);
+              set({ dyslexicFont: false });
+            }
+          });
         } catch (error) {
           console.error('Error toggling dyslexic font:', error);
+          set({ dyslexicFont: false });
         }
       },
 

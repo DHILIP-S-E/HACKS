@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AccessibilityNLP, SupportedLanguage } from '../../lib/accessibilityNLP';
-import { GeminiTranslator } from '../../lib/geminiTranslator';
+import { CustomLanguageProcessor, TAMIL_LEARNING_CONFIG, MALAYALAM_LEARNING_CONFIG, KANNADA_LEARNING_CONFIG } from '../../lib/customLanguageProcessor';
 import { Eye, Volume2, Type, Lightbulb, Globe } from 'lucide-react';
 
 interface AccessibilityHelperProps {
@@ -104,28 +104,30 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
 
           <div className="space-y-2">
             <button
-              onClick={async () => {
-                console.log('Button clicked for language:', selectedLanguage);
-                let processedText;
+              onClick={() => {
+                console.log('Processing with custom NLP for:', selectedLanguage);
                 
                 if (selectedLanguage === 'english') {
-                  processedText = await GeminiTranslator.simplifyText(content, 'english');
+                  onSimplify(analysis.simplifiedText);
                 } else {
-                  const langMap = {
-                    tamil: 'Tamil',
-                    malayalam: 'Malayalam', 
-                    kannada: 'Kannada'
+                  // Use custom language processor
+                  const configs = {
+                    tamil: TAMIL_LEARNING_CONFIG,
+                    malayalam: MALAYALAM_LEARNING_CONFIG,
+                    kannada: KANNADA_LEARNING_CONFIG
                   };
-                  processedText = await GeminiTranslator.translateText(content, langMap[selectedLanguage]);
+                  
+                  const processor = new CustomLanguageProcessor(configs[selectedLanguage]);
+                  const result = processor.processText(content);
+                  
+                  console.log('Custom NLP result:', result);
+                  onSimplify(result.translatedText);
                 }
-                
-                console.log('Processed text:', processedText);
-                onSimplify(processedText);
               }}
               className="w-full bg-green-500 text-white text-sm py-2 rounded hover:bg-green-600 flex items-center justify-center gap-2"
             >
               <Type className="w-3 h-3" />
-              {selectedLanguage === 'english' ? 'Simplify with AI' : 'Translate with AI'}
+              {selectedLanguage === 'english' ? 'Simplify Text' : 'Process with Custom NLP'}
             </button>
 
             <button
@@ -147,11 +149,25 @@ export const AccessibilityHelper: React.FC<AccessibilityHelperProps> = ({ conten
 
           {analysis.keyPoints.length > 0 && (
             <div className="bg-blue-50 p-2 rounded">
-              <span className="text-xs font-medium">Key Points:</span>
+              <span className="text-xs font-medium">Key Points ({selectedLanguage}):</span>
               <ul className="text-xs mt-1 space-y-1">
-                {analysis.keyPoints.map((point, i) => (
-                  <li key={i}>• {point}</li>
-                ))}
+                {selectedLanguage === 'english' ? 
+                  analysis.keyPoints.map((point, i) => (
+                    <li key={i}>• {point}</li>
+                  )) :
+                  (() => {
+                    const configs = {
+                      tamil: TAMIL_LEARNING_CONFIG,
+                      malayalam: MALAYALAM_LEARNING_CONFIG, 
+                      kannada: KANNADA_LEARNING_CONFIG
+                    };
+                    const processor = new CustomLanguageProcessor(configs[selectedLanguage]);
+                    const result = processor.processText(content);
+                    return result.keyPoints.map((point, i) => (
+                      <li key={i}>• {point}</li>
+                    ));
+                  })()
+                }
               </ul>
             </div>
           )}

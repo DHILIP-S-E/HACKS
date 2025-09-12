@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { LessonService } from '@/lib/lessonService';
 import { localAdapter } from '@/lib/adapters/localAdapter';
-import { Plus, Clock } from 'lucide-react';
+import { useProgressStore } from '@/stores/progressStore';
+import { Plus, Clock, CheckCircle } from 'lucide-react';
 
 const LessonsPage: React.FC = () => {
   const [topic, setTopic] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState('');
   const [lessons, setLessons] = useState([]);
+  const { progress } = useProgressStore();
 
   useEffect(() => {
     const loadLessons = async () => {
@@ -164,12 +166,17 @@ const LessonsPage: React.FC = () => {
               </div>
             </div>
             
-            <Link
-              to={`/lessons/${lesson.id}`}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-            >
-              Start Lesson
-            </Link>
+            <div className="flex items-center justify-between">
+              <Link
+                to={`/lessons/${lesson.id}`}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+              >
+                {progress?.completedLessons?.includes(lesson.id) ? 'Review Lesson' : 'Start Lesson'}
+              </Link>
+              {progress?.completedLessons?.includes(lesson.id) && (
+                <CheckCircle className="w-6 h-6 text-green-500" />
+              )}
+            </div>
           </div>
         ))}
       </div>
