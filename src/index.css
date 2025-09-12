@@ -1,0 +1,193 @@
+/* Dyslexia-friendly font import */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* High contrast mode variables */
+:root {
+  --focus-ring: 0 0 0 2px theme('colors.primary.500');
+}
+
+.high-contrast {
+  --focus-ring: 0 0 0 3px theme('colors.hc-primary');
+}
+
+/* Base layer styles for accessibility */
+@layer base {
+  * {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+  
+  .high-contrast * {
+    @apply focus-visible:ring-hc-primary focus-visible:ring-offset-hc-bg;
+  }
+
+  body {
+    @apply font-readable text-neutral-900 bg-white transition-colors duration-200;
+  }
+
+  .dark body {
+    @apply text-neutral-100 bg-neutral-900;
+  }
+
+  .high-contrast body {
+    @apply text-hc-text bg-hc-bg font-bold;
+  }
+
+  .dyslexic-font {
+    @apply font-dyslexic;
+  }
+
+  /* Skip link for screen readers */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-500 focus:text-white focus:no-underline;
+  }
+
+  /* Reading ruler */
+  .reading-ruler {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: theme('colors.primary.500');
+    z-index: 1000;
+    pointer-events: none;
+    transition: top 0.1s ease;
+  }
+
+  /* Highlight styles */
+  .highlight {
+    @apply bg-yellow-200 dark:bg-yellow-900/50 px-1 rounded transition-colors;
+  }
+
+  .highlight.active {
+    @apply bg-yellow-300 dark:bg-yellow-800/70;
+  }
+
+  /* TTS active reading */
+  .tts-reading {
+    @apply bg-blue-200 dark:bg-blue-900/50 animate-pulse;
+  }
+}
+
+@layer components {
+  /* Button variants */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply btn bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700;
+  }
+
+  .btn-outline {
+    @apply btn border border-primary-500 text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20;
+  }
+
+  .btn-ghost {
+    @apply btn text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800;
+  }
+
+  /* Card component */
+  .card {
+    @apply bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 transition-colors;
+  }
+
+  /* Form inputs */
+  .form-input {
+    @apply block w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+  }
+
+  /* High contrast overrides */
+  .high-contrast .btn {
+    @apply border-2 border-hc-border font-bold;
+  }
+
+  .high-contrast .btn-primary {
+    @apply bg-hc-primary text-hc-bg border-hc-primary;
+  }
+
+  .high-contrast .card {
+    @apply bg-hc-bg border-2 border-hc-border;
+  }
+
+  .high-contrast .form-input {
+    @apply bg-hc-bg text-hc-text border-2 border-hc-border focus:ring-hc-primary;
+  }
+}
+
+@layer utilities {
+  /* Text spacing utilities */
+  .text-spacing-tight {
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+  }
+
+  .text-spacing-normal {
+    letter-spacing: 0;
+    line-height: 1.6;
+  }
+
+  .text-spacing-wide {
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+  }
+
+  .text-spacing-extra-wide {
+    letter-spacing: 0.1em;
+    line-height: 2;
+  }
+
+  /* Focus trap utility */
+  .focus-trap {
+    @apply focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 rounded-lg;
+  }
+
+  /* Screen reader only but focusable */
+  .sr-only-focusable {
+    @apply sr-only focus:not-sr-only focus:absolute focus:z-10 focus:p-2 focus:bg-white focus:text-black focus:border focus:border-black;
+  }
+}
+
+/* Animation for content loading */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200px 100%;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break-before {
+    break-before: page;
+  }
+  
+  .print-break-after {
+    break-after: page;
+  }
+}
