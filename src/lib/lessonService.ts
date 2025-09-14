@@ -80,13 +80,14 @@ Write the actual lesson content, not instructions. Fill in all the bracketed sec
 
   private extractObjectives(content: string): string[] {
     const objectiveMatch = content.match(/Learning Objectives?:?\s*([\s\S]*?)(?:\n\n|\n[A-Z])/i);
-    if (!objectiveMatch) return [];
+    if (!objectiveMatch) return ['Learn key concepts', 'Apply knowledge', 'Practice skills'];
     
     return objectiveMatch[1]
       .split(/\n/)
-      .filter(line => line.trim().startsWith('-') || line.trim().match(/^\d+\./))
-      .map(line => line.replace(/^[-\d.]\s*/, '').trim())
-      .filter(Boolean);
+      .filter(line => line.trim().startsWith('-') || line.trim().match(/^\d+\./)) 
+      .map(line => line.replace(/^[-\d.\s]*/, '').trim())
+      .filter(Boolean)
+      .slice(0, 4);
   }
 
   private estimateDuration(difficulty: 'beginner' | 'intermediate' | 'advanced'): number {

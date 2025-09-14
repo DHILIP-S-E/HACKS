@@ -1,9 +1,9 @@
 import localforage from 'localforage';
 import { v4 as uuidv4 } from 'uuid';
-import type { User, UserRole } from '@/types/auth';
-import type { Lesson, LessonProgress } from '@/types/lesson';
-import type { Progress, Badge, Achievement } from '@/types/progress';
-import type { Highlight, Note } from '@/types/content';
+import type { User, UserRole } from '../../types/auth';
+import type { Lesson, LessonProgress } from '../../types/lesson';
+import type { Progress, Badge, Achievement } from '../../types/progress';
+import type { Highlight } from '../../types/notes';
 
 // Configure localforage instances
 const authStore = localforage.createInstance({
@@ -116,7 +116,7 @@ Web accessibility ensures that websites and applications are usable by people wi
           difficulty: 'beginner',
           estimatedDuration: 30,
           tags: ['accessibility', 'web', 'basics'],
-          isPublished: true,
+          status: 'published',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -167,7 +167,7 @@ Screen readers are assistive technologies that convert text and interface elemen
           difficulty: 'intermediate',
           estimatedDuration: 45,
           tags: ['screen-reader', 'navigation', 'testing'],
-          isPublished: true,
+          status: 'published',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -220,7 +220,7 @@ Color accessibility ensures that content is perceivable by users with various vi
           difficulty: 'intermediate',
           estimatedDuration: 35,
           tags: ['color', 'contrast', 'visual', 'design'],
-          isPublished: true,
+          status: 'published',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -298,6 +298,17 @@ Color accessibility ensures that content is perceivable by users with various vi
       lastActivity: new Date().toISOString(),
       completedLessons: [],
       achievements: [],
+      stats: {
+        totalTimeSpent: 0,
+        averageSessionTime: 0,
+        lessonsCompleted: 0,
+        quizzesCompleted: 0,
+        averageScore: 0,
+        highlightsMade: 0,
+        notesCreated: 0,
+        accessibilityFeaturesUsed: {},
+        subjectProgress: {}
+      }
     };
     
     await progressStore.setItem(`progress_${user.id}`, initialProgress);
@@ -356,6 +367,9 @@ Color accessibility ensures that content is perceivable by users with various vi
       name: this.getBadgeName(badgeId),
       description: this.getBadgeDescription(badgeId),
       icon: this.getBadgeIcon(badgeId),
+      rarity: 'common',
+      category: 'learning',
+      requirements: [],
       awardedAt: new Date().toISOString(),
     };
 
@@ -381,7 +395,10 @@ Color accessibility ensures that content is perceivable by users with various vi
       id: achievementId,
       name: this.getAchievementName(achievementId),
       description: this.getAchievementDescription(achievementId),
+      category: 'learning',
+      difficulty: 'bronze',
       xpReward: this.getAchievementXP(achievementId),
+      requirements: [],
       unlockedAt: new Date().toISOString(),
     };
 
