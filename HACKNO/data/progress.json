@@ -1,0 +1,29 @@
+[
+  {
+    "id": "progress_1",
+    "userId": "user_1",
+    "lessonId": "lesson_1",
+    "type": "highlight",
+    "content": "Machine learning is a subset of artificial intelligence that focuses on algorithms that can learn from data.",
+    "notes": "Important definition to remember for the exam",
+    "timestamp": "2025-01-12T10:30:00Z"
+  },
+  {
+    "id": "progress_2",
+    "userId": "user_1",
+    "lessonId": "lesson_1",
+    "type": "note",
+    "content": "Neural networks are inspired by biological neural networks.",
+    "notes": "Research more about biological connections",
+    "timestamp": "2025-01-12T11:00:00Z"
+  },
+  {
+    "id": "progress_3",
+    "userId": "user_1",
+    "lessonId": "lesson_2",
+    "type": "highlight",
+    "content": "Accessibility in web development ensures that websites are usable by people with disabilities.",
+    "notes": "Key principle for inclusive design",
+    "timestamp": "2025-01-12T11:30:00Z"
+  }
+]

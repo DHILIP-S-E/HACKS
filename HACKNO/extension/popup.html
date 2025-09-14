@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistive Learning</title>
+    <style>
+        body {
+            width: 320px;
+            min-height: 400px;
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #495057;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 16px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #495057;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #007bff;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .recent-highlights {
+            margin-top: 20px;
+        }
+        
+        .recent-highlights h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .highlight-item {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .highlight-text {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .highlight-meta {
+            color: #6c757d;
+            font-size: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
+            padding: 20px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .keyboard-shortcuts {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .keyboard-shortcuts h4 {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+            color: #6c757d;
+        }
+        
+        .shortcut-key {
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 2px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 Assistive Learning</h1>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-card">
+            <span class="stat-number" id="highlight-count">0</span>
+            <div class="stat-label">Highlights</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number" id="note-count">0</span>
+            <div class="stat-label">Notes</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label>Extension Status</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="extension-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="control-group">
+            <label for="language-select">Language</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>High Contrast</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="contrast-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="control-group">
+            <label>Dyslexia-Friendly Font</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="font-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    
+    <button class="btn btn-primary" id="open-portal">📊 Open Learning Portal</button>
+    <button class="btn btn-secondary" id="export-highlights">📤 Export Highlights</button>
+    
+    <div class="recent-highlights">
+        <h3>Recent Highlights</h3>
+        <div id="highlights-list">
+            <div class="empty-state">
+                No highlights yet. Select text on any webpage to get started!
+            </div>
+        </div>
+    </div>
+    
+    <div class="keyboard-shortcuts">
+        <h4>Keyboard Shortcuts</h4>
+        <div class="shortcut">
+            <span>Highlight text</span>
+            <span class="shortcut-key">Ctrl+H</span>
+        </div>
+        <div class="shortcut">
+            <span>Add note</span>
+            <span class="shortcut-key">Ctrl+N</span>
+        </div>
+        <div class="shortcut">
+            <span>Speak text</span>
+            <span class="shortcut-key">Ctrl+S</span>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

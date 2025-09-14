@@ -1,0 +1,12 @@
+[
+  {
+    "userId": "user_1",
+    "badge": "First Highlight",
+    "awardedAt": "2025-01-12T10:30:00Z"
+  },
+  {
+    "userId": "user_1",
+    "badge": "Note Taker",
+    "awardedAt": "2025-01-12T11:30:00Z"
+  }
+]

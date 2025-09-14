@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Assistive Learning Platform - Inclusive education tools for students with learning disabilities" />
+    <meta name="keywords" content="accessibility, learning disabilities, education, inclusive design, assistive technology" />
+    <meta name="author" content="Assistive Learning Platform" />
+    
+    <!-- Accessibility meta tags -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#3b82f6" />
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Assistive Learning Platform" />
+    <meta property="og:description" content="Inclusive education tools for students with learning disabilities" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Assistive Learning Platform" />
+    <meta name="twitter:description" content="Inclusive education tools for students with learning disabilities" />
+    <meta name="twitter:image" content="/twitter-image.png" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/OpenDyslexic-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- CSP for security -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://generativelanguage.googleapis.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: blob: https:;
+      font-src 'self' data:;
+      connect-src 'self' https://generativelanguage.googleapis.com wss: ws:;
+      media-src 'self' blob: data:;
+      worker-src 'self' blob:;
+      child-src 'self' blob:;
+    " />
+    
+    <title>Assistive Learning Platform</title>
+  </head>
+  <body>
+    <!-- Skip link for keyboard navigation -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Screen reader announcements -->
+    <div id="sr-announcements" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+  </body>
+</html>

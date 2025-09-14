@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    body {
+      @apply bg-white text-black;
+    }
+    
+    .dark body {
+      @apply bg-black text-white;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-600;
+  }
+  
+  /* Skip link */
+  .skip-link {
+    @apply absolute -top-10 left-4 z-50 bg-primary-600 text-white px-4 py-2 rounded;
+    @apply focus:top-4 transition-all duration-200;
+  }
+}
+
+@layer components {
+  /* Dyslexia-friendly styles */
+  .dyslexia-friendly {
+    font-family: 'OpenDyslexic', Arial, sans-serif !important;
+    letter-spacing: 0.12em;
+    line-height: 1.8;
+  }
+  
+  /* Reading ruler */
+  .reading-ruler {
+    position: relative;
+  }
+  
+  .reading-ruler::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5em;
+    background: rgba(255, 255, 0, 0.3);
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  /* High contrast button */
+  .btn-high-contrast {
+    @apply bg-black text-white border-2 border-white;
+  }
+  
+  .btn-high-contrast:hover {
+    @apply bg-white text-black border-black;
+  }
+  
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary-600;
+  }
+}
